@@ -1,0 +1,55 @@
+server port: 8090   # tomcat server port number set to 8090
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:   # Google Oauth2 Login API Service setting
+            client-id: 828607841252-7sn13ahvqr308lhmjqf11m6m4rdu5npj.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+    user:           # Spring Security Default ID and Password
+      name: user
+      password: 1234
+  datasource:       # JDBC Connection setting
+    url: jdbc:mariadb://localhost:3306/mydb        # mariadb
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: 1234
+  h2:               # H2 Console Connection setting
+    console:
+      path: /h2-console
+      enabled: true
+  jpa:
+    show-sql: true
+    defer-datasource-initialization: true # data.sql 사용을 위해서 필수적으로 등록
+    properties:
+      hibernate:
+        format_sql: true  # sql문 pretty하게 보여줌
+        use_sql_comments: true
+    generate-ddl: true   # true, false
+    hibernate:
+      ddl-auto: create    # create, create-drop, update, validate, none
+  sql:
+    init:
+      mode: always # never, always
+      # always: embeded db가 아닌 외부 db 사용 시 spring boot를 실행할때 마다 data.sql schema.sql import.sql을 항상 실행
+      # never: data.sql schema.sql import.sql을 실행하지 않음
+      encoding: utf-8
+  devtools:
+    livereload:
+      enabled: true
+
+mybatis:
+  mapper-locations: mybatis-mapper/**/*.xml         # mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true # camel case
+  # xml에 있는 모델 앞의 패키지명을 생략 가능하도록 지원해주는 기능
+  type-aliases-package: com.thejoeun.practice1.boilerplate1.model
+
+jwt:
+  issuer: loonda9703@gmail.com
+  secret_key: 1234
