@@ -52,4 +52,4 @@ mybatis:
 
 jwt:
   issuer: loonda9703@gmail.com
-  secret_key: 1234
+  secret: 1234
