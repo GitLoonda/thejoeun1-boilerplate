@@ -14,9 +14,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
@@ -34,17 +38,24 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
                 .requestMatchers(toH2Console())
-//                .antMatchers("/img/**", "/css/**", "/js/**")
-//                .requestMatchers("/img/**", "/css/**", "/js/**", "/auth/**")
                 ;
     }
 
+    /**
+     * desc: spring security 설정 부분
+     * 참고 공식url: https://docs.spring.io/spring-security/reference/servlet/integrations/mvc.html
+     * @param http
+     * @param introspector
+     * @return
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http
-//            , HandlerMappingIntrospector introspector
+            , HandlerMappingIntrospector introspector
     ) throws Exception {
-//        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+
         http
                 .httpBasic().disable()
                 .csrf().disable()
@@ -55,20 +66,14 @@ public class WebSecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
-
-//            .authorizeHttpRequests()
-                .authorizeRequests()
-                .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-//                .antMatchers("/question/detail/**")
-//                .authorizeHttpRequests((authorize) -> authorize
-//                    .requestMatchers("/auth/**").permitAll()
-//                    .anyRequest().authenticated())
-//            .authorizeRequests()
-////                .antMatchers("/auth/**").permitAll()
-//            .requestMatchers("/auth/**").permitAll()
-////                .requestMatchers(mvcMatcherBuilder.pattern("/auth/**")).permitAll()
-//                .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**"))
-//                .requestMatchers(new AntPathRequestMatcher("/auth/**"))
+//            .authorizeHttpRequests(request -> request
+//                    .requestMatchers(mvcMatcherBuilder.pattern("/auth3/**")).permitAll()
+//                    .requestMatchers(mvcMatcherBuilder.pattern("/auth4/**")).permitAll()
+//                    .anyRequest().authenticated()
+//            )
+                .authorizeHttpRequests()
+                .requestMatchers(mvcMatcherBuilder.pattern("/api/auth/**")).permitAll()
+//            .requestMatchers(AntPathRequestMatcher.antMatcher("/auth2/**")).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
@@ -84,5 +89,10 @@ public class WebSecurityConfig {
     @Bean
     public OAuth2CustomAuthenticationSuccessHandler customAuth2SuccessHandler() {
         return new OAuth2CustomAuthenticationSuccessHandler(oAuth2CustomUserService);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

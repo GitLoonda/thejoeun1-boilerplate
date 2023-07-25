@@ -37,6 +37,27 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setPassword(String password) { this.password = password; }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void setAccessTokenExpireIn(Long accessTokenExpireIn) {
+        this.accessTokenExpireIn = accessTokenExpireIn;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public void setAuthority(Authority authority) {
+        this.authority = authority;
+    }
 
     public Member update(String nickname, String email) {
         this.nickname = nickname;
