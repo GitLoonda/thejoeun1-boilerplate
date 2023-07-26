@@ -1,5 +1,5 @@
 server:
-  port: 8090        # tomcat server port number set to 8090
+  port: 88          # tomcat server port number set to 8090
 
 spring:
   security:
