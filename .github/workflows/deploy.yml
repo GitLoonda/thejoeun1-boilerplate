@@ -1,0 +1,14 @@
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy
+        env:
+          WEBHOOK_URL: https://api.qoddi.com/push/?key=zv53wjpgdmhun2reqcob1kis89l7ftyx6a4
+        run: |
+          curl -X GET https://api.qoddi.com/push/?key=zv53wjpgdmhun2reqcob1kis89l7ftyx6a4
