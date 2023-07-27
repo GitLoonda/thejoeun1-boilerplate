@@ -1,7 +1,45 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 function SignUpForm () {
+
+  let nav = useNavigate();
+  
+  const [data, setData] = useState({
+    email: '',
+    password: '',
+    nickname: ''
+  });
+
+  const onChangeValue = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  async function signUp() {
+    const option =  {
+      url: '/api/auth/signup',
+      method: "POST",
+      header: {
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(data)
+    };
+    await axios(option)
+      .then(res => {
+        if(res && res.status === 200) {
+          alert("회원가입 완료되었습니다.");
+          nav('/login');
+        } else {
+          alert("회원가입 실패하였습니다.");
+        }
+      });
+  }
+
 
   return (
     <section className="d-flex vh-100" style={{ backgroundColor: "rgb(33,37,41)" }}>
@@ -14,17 +52,17 @@ function SignUpForm () {
               <form method="POST">
                 <div className="mb-3">
                   <label className="form-label text-white">Email address</label>
-                  <input type="email" className="form-control" name="email" />
+                  <input type="email" className="form-control" name="email" onChange={(e) => onChangeValue(e)} />
                 </div>
                 <div className="mb-3">
                   <label className="form-label text-white">Password</label>
-                  <input type="password" className="form-control" name="password" />
+                  <input type="password" className="form-control" name="password" onChange={(e) => onChangeValue(e)} />
                 </div>
                 <div className="mb-3">
                   <label className="form-label text-white">Nickname</label>
-                  <input type="text" className="form-control" name="nickname" />
+                  <input type="text" className="form-control" name="nickname" onChange={(e) => onChangeValue(e)} />
                 </div>
-                <button type="submit" className="btn btn-primary">회원가입</button>
+                <button type="submit" className="btn btn-primary" onClick={signUp}>회원가입</button>
               </form>
             </div>
           </div>
