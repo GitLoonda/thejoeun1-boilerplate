@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie'
 
 function LoginForm () {
 
-  let nav = useNavigate();
-
-  const [token, setToken]  = useState('');
-
+  const nav = useNavigate();
+  const [cookie, setCookie, removeCooike] = useCookies(['Cookie']);
   const [data, setData] = useState({
     email: '',
     password: ''
@@ -21,25 +20,30 @@ function LoginForm () {
     });
   }
 
-  async function login() {
-    const option =  {
-      url: '/api/auth/login',
+  const login = async (e) => {
+    e.preventDefault();
+    await fetch('/api/auth/login', {
       method: "POST",
-      header: {
-        "Content-Type":"application/json"
-      },
+      headers: {
+            "Content-Type":"application/json"
+          },
       body: JSON.stringify(data)
-    };
-    await axios(option)
-      .then(res => {
-        if(res && res.status === 200) {
-          alert("로그인 되었습니다.");
-          setToken(res.accessToken);
-          nav('/home');
-        } else {
-          alert("로그인 실패하였습니다.");
-        }
-      });
+    })
+    .then(res => {
+      if(res.status !== 200) {
+        return alert("로그인 실패하였습니다.");
+      } else {
+        return res.json();
+      }
+    })
+    .then(data => {
+      if(data) {
+        const expires = new Date(Number(data.tokenExpiresIn));
+            setCookie('token', data.accessToken, { expires: expires });
+            alert("로그인 되었습니다.");
+            nav('/');
+      }
+    });
   }
 
   return (
@@ -50,7 +54,7 @@ function LoginForm () {
             <h2 className="text-white">LOGIN</h2>
             <p className="text-white-50 mt-2 mb-5">서비스를 사용하려면 로그인을 해주세요!</p>
             <div className="mb-2">
-              <form action="/login" method="POST">
+              <form onSubmit={login}>
                 <div className="mb-3">
                   <label className="form-label text-white">Email address</label>
                   <input type="email" style={{}} className="form-control" name="email" onChange={(e) => onChangeValue(e)} />
@@ -59,7 +63,7 @@ function LoginForm () {
                   <label className="form-label text-white">Password</label>
                   <input type="password" style={{}} className="form-control" name="password" onChange={(e) => onChangeValue(e)} />
                 </div>
-                <button type="submit" className="btn btn-primary" onClick={login}>로그인</button>
+                <button type="submit" className="btn btn-primary">로그인</button>
               </form>
               <br />
               <div>

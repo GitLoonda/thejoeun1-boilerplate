@@ -20,24 +20,24 @@ function SignUpForm () {
     });
   }
 
-  async function signUp() {
-    const option =  {
-      url: '/api/auth/signup',
+  const signUp = async (e) => {
+    e.preventDefault();
+    await fetch('/api/auth/signup', {
       method: "POST",
-      header: {
-        "Content-Type":"application/json"
+      headers: {
+        "Content-Type":"application/json",
       },
       body: JSON.stringify(data)
-    };
-    await axios(option)
-      .then(res => {
-        if(res && res.status === 200) {
-          alert("회원가입 완료되었습니다.");
-          nav('/login');
-        } else {
-          alert("회원가입 실패하였습니다.");
-        }
-      });
+    })
+    .then(res => {
+      console.log(res);
+      if(res && res.status === 200) {
+        alert("회원가입 완료되었습니다.");
+        nav('/login');
+      } else {
+        return alert("회원가입 실패하였습니다.");
+      }
+    });
   }
 
 
@@ -49,7 +49,7 @@ function SignUpForm () {
             <h2 className="text-white">회원가입</h2>
             <p className="text-white-50 mt-2 mb-5">서비스 사용을 위해서 회원가입을 해주세요</p>
             <div className="mb-2">
-              <form method="POST">
+              <form onSubmit={signUp}>
                 <div className="mb-3">
                   <label className="form-label text-white">Email address</label>
                   <input type="email" className="form-control" name="email" onChange={(e) => onChangeValue(e)} />
@@ -62,7 +62,7 @@ function SignUpForm () {
                   <label className="form-label text-white">Nickname</label>
                   <input type="text" className="form-control" name="nickname" onChange={(e) => onChangeValue(e)} />
                 </div>
-                <button type="submit" className="btn btn-primary" onClick={signUp}>회원가입</button>
+                <button type="submit" className="btn btn-primary">회원가입</button>
               </form>
             </div>
           </div>
