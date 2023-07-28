@@ -7,7 +7,7 @@ import { useCookies } from 'react-cookie'
 function LoginForm () {
 
   const nav = useNavigate();
-  const [cookie, setCookie, removeCooike] = useCookies(['Cookie']);
+  // const [cookie, setCookie] = useCookies(['Cookie']);
   const [data, setData] = useState({
     email: '',
     password: ''
@@ -39,9 +39,14 @@ function LoginForm () {
     .then(data => {
       if(data) {
         const expires = new Date(Number(data.tokenExpiresIn));
-            setCookie('token', data.accessToken, { expires: expires });
-            alert("로그인 되었습니다.");
-            nav('/');
+        const temp = {
+          token: data.accessToken,
+          expires: expires,
+        }
+        window.localStorage.setItem('token', JSON.stringify(temp));
+        // setCookie('token', data.accessToken, { expires: expires });
+        alert("로그인 되었습니다.");
+        nav('/');
       }
     });
   }

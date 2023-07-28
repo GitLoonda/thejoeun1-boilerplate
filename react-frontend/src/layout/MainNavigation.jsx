@@ -6,21 +6,26 @@ import "bootstrap/dist/js/bootstrap";
 
 function MainNavigation () {
   const nav = useNavigate();
-  const [cookie, setCookie, removeCookie] = useCookies(['token']);
+  // const [cookie, setCookie, removeCookie] = useCookies(['token']);
   const [nickname, setNickname] = useState('');
 
   let isLogin = false;
-  if (cookie.token) {
+  // if (cookie.token) {
+  //   isLogin = true;
+  // }
+  if(window.localStorage.length !== 0) {
     isLogin = true;
   }
 
   useEffect(() => {
+    const token = JSON.parse(window.localStorage.getItem('token'));
     if(isLogin) {
       fetch('/api/member/me', {
         method: 'GET',
         headers: {
           "Content-Type": 'appliation/json',
-          "Authorization" : 'Bearer ' + cookie.token,
+          // "Authorization" : 'Bearer ' + cookie.token,
+          "Authorization" : 'Bearer ' + token.token,
         },
       }).then(res => {
         if (!(res && res.status === 200)) {
@@ -34,7 +39,8 @@ function MainNavigation () {
   }, [isLogin]);
 
   const logout = () => {
-    removeCookie('token');
+    // removeCookie('token');
+    window.localStorage.removeItem('token');
     alert("로그아웃 하였습니다.");
     nav("/");
   }
