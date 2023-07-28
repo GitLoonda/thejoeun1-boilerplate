@@ -29,7 +29,7 @@ function MainNavigation () {
         },
       }).then(res => {
         if (!(res && res.status === 200)) {
-          return alert('회원 정보 조회에 실패하였습니다.');
+          return alert('회원정보 조회에 실패하였습니다.');
         }
         return res.json();
       }).then(data => {
